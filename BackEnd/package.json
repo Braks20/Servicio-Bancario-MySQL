@@ -2,6 +2,8 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "init": "^0.1.2",
-    "mysql2": "^3.22.3"
+    "mysql2": "^3.22.3",
+    "sequelize": "^6.37.8",
+    "sequelize-cli": "^6.6.5"
   }
 }
