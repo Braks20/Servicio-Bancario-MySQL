@@ -24,10 +24,14 @@ Backend de un sistema bancario moderno construido sobre **Node.js**, **Sequelize
 | Tecnología | Versión | Propósito |
 |---|---|---|
 | Node.js | ≥ 18 | Runtime de JavaScript |
+| Express.js | 4.x | Framework web para la API REST |
 | Sequelize | 6.x | ORM para MySQL |
 | Sequelize CLI | 6.x | Gestión de migrations y seeds |
 | mysql2 | latest | Driver de conexión a MySQL |
+| bcrypt | 6.x | Encriptado de contraseñas |
+| jsonwebtoken | 9.x | Generación y validación de tokens JWT |
 | dotenv | latest | Gestión de variables de entorno |
+| cors | latest | Habilitar peticiones de otros orígenes |
 
 ---
 
@@ -36,38 +40,47 @@ Backend de un sistema bancario moderno construido sobre **Node.js**, **Sequelize
 ```
 BackEnd/
 │
+├── app.js                    # Punto de entrada de la aplicación y servidor Express
+│
 ├── config/
 │   └── config.json           # Configuración de Sequelize (host, BD, usuario)
 │
-├── controllers/              # Lógica de negocio por recurso (próximamente)
+├── controllers/              # Lógica de negocio de la API
+│   ├── auditoriaController.js
+│   ├── authController.js
+│   ├── clienteController.js
+│   ├── cuentaController.js
+│   ├── prestamoController.js
+│   ├── tarjetaCreditoController.js
+│   └── transaccionController.js
 │
 ├── db/
 │   └── testConnection.js     # Script para verificar la conexión con MySQL
 │
+├── middlewares/              # Interceptores para Express
+│   ├── auditoria.js          # Registro automático de eventos y acciones
+│   ├── auth.js               # Verificación de tokens JWT
+│   └── roles.js              # Autorización basada en roles
+│
 ├── migrations/               # Historial de cambios en la base de datos
-│   ├── 001-crear-tabla-roles.js
-│   ├── 002-crear-tabla-clientes.js
-│   ├── 003-crear-tabla-usuarios.js
-│   ├── 004-crear-tabla-cuentas.js
-│   ├── 005-crear-tabla-transacciones.js
-│   ├── 006-crear-tabla-prestamos.js
-│   ├── 007-crear-tabla-tarjetas-credito.js
-│   ├── 008-crear-tabla-notificaciones.js
-│   ├── 009-crear-tabla-log-auditoria.js
-│   └── 010-agregar-indices.js
+│   └── ... (001 a 010)
 │
-├── models/                   # Modelos Sequelize por tabla (próximamente)
+├── models/                   # Modelos Sequelize y sus asociaciones
+│   ├── index.js              # Inicializador de Sequelize
+│   └── ... (Cliente, Cuenta, Transaccion, etc.)
 │
-├── routes/                   # Definición de rutas de la API (próximamente)
+├── routes/                   # Definición de endpoints de la API
+│   ├── index.js              # Enrutador principal (/api)
+│   └── ... (authRoutes, clienteRoutes, etc.)
 │
 ├── seeders/
 │   └── 011-roles-iniciales.js  # Datos iniciales: roles del sistema
 │
+├── ServicioBancario.postman_collection.json # Colección lista para importar en Postman
 ├── .env                      # Variables de entorno (NO subir a Git)
 ├── .gitignore                # Archivos excluidos del repositorio
 ├── .sequelizerc              # Rutas personalizadas para Sequelize CLI
-├── package.json              # Dependencias y scripts del proyecto
-└── README.md                 # Este archivo
+└── package.json              # Dependencias y scripts del proyecto
 ```
 
 ---
@@ -236,6 +249,32 @@ node db/testConnection.js
    Base de datos: Banco
    Usuario      : root
 ```
+
+---
+
+## 🚦 Iniciar el Servidor
+
+Una vez completadas las configuraciones, migraciones y comprobada la conexión, levanta la API REST:
+
+```bash
+node app.js
+```
+*(También puedes usar `npx nodemon app.js` para desarrollo)*
+
+El servidor estará escuchando en `http://localhost:3000`.
+
+---
+
+## 📬 Colección de Postman
+
+El proyecto incluye una colección completa de Postman lista para ser importada y probar todos los endpoints sin tener que escribir JSON manualmente.
+
+1. Abre **Postman**.
+2. Presiona **Import**.
+3. Selecciona el archivo **`ServicioBancario.postman_collection.json`** ubicado en la raíz de `BackEnd`.
+4. Encontrarás la colección "Servicio Bancario API" con carpetas ordenadas para Auth, Clientes, Cuentas y Transacciones.
+
+> 💡 **Nota de Seguridad**: Después de usar el endpoint **Login** y recibir tu Token JWT, cópialo y dirígete a las variables de la colección en Postman para asignarlo a la variable `token`. Esto autenticará automáticamente el resto de tus peticiones.
 
 ---
 
