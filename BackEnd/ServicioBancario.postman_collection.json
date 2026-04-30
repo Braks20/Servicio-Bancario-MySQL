@@ -1,0 +1,281 @@
+{
+  "info": {
+    "name": "Servicio Bancario API",
+    "description": "Colección de endpoints para el backend bancario. Recuerda actualizar la variable 'token' después de hacer login.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "TU_TOKEN_JWT_AQUI",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/perfil",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "perfil"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Clientes",
+      "item": [
+        {
+          "name": "Crear Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Perez\",\n  \"dpi\": \"1234567890101\",\n  \"email\": \"juan.perez@email.com\",\n  \"telefono\": \"55551234\",\n  \"fecha_nacimiento\": \"1990-05-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/clientes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar Clientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clientes"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Cuentas",
+      "item": [
+        {
+          "name": "Crear Cuenta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente_id\": 1,\n  \"tipo\": \"ahorro\",\n  \"moneda\": \"GTQ\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cuentas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cuentas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Consultar Saldo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cuentas/1/saldo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cuentas",
+                "1",
+                "saldo"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Transacciones",
+      "item": [
+        {
+          "name": "Depósito",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cuenta_destino\": 1,\n  \"monto\": 1500.00,\n  \"descripcion\": \"Depósito inicial en efectivo\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/transacciones/deposito",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "transacciones",
+                "deposito"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Retiro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cuenta_origen\": 1,\n  \"monto\": 500.00,\n  \"descripcion\": \"Retiro en cajero automático\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/transacciones/retiro",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "transacciones",
+                "retiro"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Transferencia",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cuenta_origen\": 1,\n  \"cuenta_destino\": 2,\n  \"monto\": 300.00,\n  \"descripcion\": \"Pago de alquiler mensual\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/transacciones/transferencia",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "transacciones",
+                "transferencia"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

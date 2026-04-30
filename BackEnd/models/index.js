@@ -52,4 +52,4 @@ Object.values(models).forEach((model) => {
 });
 
 // ─── Exportar ─────────────────────────────────────────────────────────────────
-module.exports = { sequelize, ...models };
+module.exports = { sequelize, Sequelize, ...models };
