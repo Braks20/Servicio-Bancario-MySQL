@@ -33,7 +33,7 @@ module.exports = (sequelize) => {
         foreignKey: 'cliente_id',
         as: 'notificaciones',
       });
-    }
+    } 
   }
 
   Cliente.init(
