@@ -1,7 +1,10 @@
 .page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 .page-header {
@@ -11,16 +14,24 @@
 }
 
 .page-header h1 {
-  font-size: 1.8rem;
-  color: #0f172a;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-dark);
 }
 
+.page-description {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+/* Tablas Modernas */
 .data-table-container {
   background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
   overflow: hidden;
-  border: 1px solid #e2e8f0;
+  box-shadow: var(--shadow-sm);
 }
 
 table {
@@ -29,18 +40,23 @@ table {
 }
 
 th {
-  background-color: #f8fafc;
-  padding: 1rem;
+  background-color: #F8FAFC;
+  padding: 1.25rem 1.5rem;
   text-align: left;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: #475569;
-  border-bottom: 1px solid #e2e8f0;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
 }
 
 td {
-  padding: 1rem;
-  border-bottom: 1px solid #e2e8f0;
-  color: #1e293b;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #F1F5F9;
+  color: var(--text-main);
+  font-size: 0.9375rem;
+  vertical-align: middle;
 }
 
 tr:last-child td {
@@ -48,5 +64,41 @@ tr:last-child td {
 }
 
 tr:hover {
-  background-color: #f1f5f9;
+  background-color: #F8FAFC;
+}
+
+/* Estados */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge.activo, .badge.active, .badge.success { background: #E6F9F3; color: var(--secondary-green); }
+.badge.inactivo, .badge.inactive, .badge.pending { background: #FEF3C7; color: #92400E; }
+.badge.error, .badge.rejected { background: #FEE2E2; color: #991B1B; }
+
+/* Botones de acción */
+.btn-action-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  background: white;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-action-icon:hover {
+  background: #F1F5F9;
+  color: var(--text-main);
+  border-color: var(--text-main);
 }

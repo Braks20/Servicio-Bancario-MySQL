@@ -14,6 +14,6 @@ router.post('/', verificarRol('admin'), tarjetaCreditoController.crear);
 router.patch('/:id/estado', verificarRol('admin'), tarjetaCreditoController.actualizarEstado);
 
 // Pagar saldo (cajero o cliente)
-router.post('/:id/pagar', verificarRol('admin', 'cajero', 'cliente'), tarjetaCreditoController.pagarSaldo);
+router.post('/:id/pagar', verificarRol('admin', 'cajero', 'usuario'), tarjetaCreditoController.pagarSaldo);
 
 module.exports = router;

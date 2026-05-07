@@ -97,6 +97,23 @@ const transaccionController = {
         return res.status(400).json({ error: `La cuenta destino está ${cuenta.estado}.` });
       }
 
+      // Validar límite de depósito: $10,000 por minuto
+      const haceUnMinuto = new Date(Date.now() - 60 * 1000);
+      const depositosRecientes = await Transaccion.sum('monto', {
+        where: {
+          cuenta_destino,
+          tipo: 'deposito',
+          created_at: { [Sequelize.Op.gte]: haceUnMinuto },
+          estado: 'completada'
+        },
+        transaction: t
+      }) || 0;
+
+      if (parseFloat(depositosRecientes) + montoDecimal > 10000) {
+        await t.rollback();
+        return res.status(400).json({ error: 'Límite de depósito excedido: Máximo $10,000 por minuto.' });
+      }
+
       // 1. Crear el registro de la transacción
       const transaccion = await Transaccion.create({
         uuid: crypto.randomUUID(),
@@ -204,33 +221,47 @@ const transaccionController = {
     const t = await sequelize.transaction();
 
     try {
-      const { cuenta_origen, cuenta_destino, monto, descripcion, referencia, canal } = req.body;
+      const { cuenta_origen, cuenta_destino, numero_destino, monto, descripcion, referencia, canal } = req.body;
       const montoDecimal = parseFloat(monto);
+      
+      let target_destino_id = cuenta_destino;
 
-      if (!cuenta_origen || !cuenta_destino || isNaN(montoDecimal) || montoDecimal <= 0) {
+      // Si no viene ID pero sí número, buscarlo
+      if (!target_destino_id && numero_destino) {
+        const cDest = await Cuenta.findOne({ where: { numero_cuenta: numero_destino }, transaction: t });
+        if (cDest) target_destino_id = cDest.id;
+      }
+
+      if (!cuenta_origen || !target_destino_id || isNaN(montoDecimal) || montoDecimal <= 0) {
         await t.rollback();
         return res.status(400).json({ error: 'Cuentas de origen/destino y un monto válido son obligatorios.' });
       }
 
-      if (cuenta_origen === cuenta_destino) {
+      if (cuenta_origen == target_destino_id) {
         await t.rollback();
         return res.status(400).json({ error: 'La cuenta origen y destino no pueden ser la misma.' });
       }
 
-      // Bloquear las filas en un orden específico (por ID menor primero) para evitar Deadlocks
-      const idMenor = Math.min(cuenta_origen, cuenta_destino);
-      const idMayor = Math.max(cuenta_origen, cuenta_destino);
+      // Bloquear las filas en un orden específico
+      const idMenor = Math.min(cuenta_origen, target_destino_id);
+      const idMayor = Math.max(cuenta_origen, target_destino_id);
 
       await Cuenta.findByPk(idMenor, { transaction: t, lock: t.LOCK.UPDATE });
       await Cuenta.findByPk(idMayor, { transaction: t, lock: t.LOCK.UPDATE });
 
       // Ahora que están bloqueadas, las obtenemos
       const cOrigen = await Cuenta.findByPk(cuenta_origen, { transaction: t });
-      const cDestino = await Cuenta.findByPk(cuenta_destino, { transaction: t });
+      const cDestino = await Cuenta.findByPk(target_destino_id, { transaction: t });
 
       if (!cOrigen || !cDestino) {
         await t.rollback();
         return res.status(404).json({ error: 'Una o ambas cuentas no existen.' });
+      }
+
+      // Si es un cliente (rol usuario), validar que la cuenta origen sea suya
+      if (req.usuario.rol_nombre === 'usuario' && cOrigen.cliente_id !== req.usuario.cliente_id) {
+        await t.rollback();
+        return res.status(403).json({ error: 'No tienes permiso para realizar transferencias desde esta cuenta.' });
       }
 
       if (cOrigen.estado !== 'activa' || cDestino.estado !== 'activa') {
@@ -253,7 +284,7 @@ const transaccionController = {
       const transaccion = await Transaccion.create({
         uuid: crypto.randomUUID(),
         cuenta_origen,
-        cuenta_destino,
+        cuenta_destino: target_destino_id,
         tipo: 'transferencia',
         monto: montoDecimal,
         moneda: cOrigen.moneda,

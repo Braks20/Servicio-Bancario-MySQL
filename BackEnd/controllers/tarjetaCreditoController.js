@@ -93,24 +93,21 @@ const tarjetaCreditoController = {
         return res.status(400).json({ error: 'Faltan campos obligatorios para emitir la tarjeta.' });
       }
 
-      const cliente = await Cliente.findByPk(cliente_id);
-      if (!cliente) return res.status(404).json({ error: 'Cliente no encontrado.' });
+      // Validar si el cliente ya tiene una tarjeta
+      const tarjetaExistente = await TarjetaCredito.findOne({ where: { cliente_id } });
+      if (tarjetaExistente) {
+        return res.status(400).json({ error: 'El cliente ya posee una tarjeta de crédito. Límite máximo: 1.' });
+      }
 
       const numero_tarjeta = generarNumeroTarjeta();
       
-      const fechaActual = new Date();
-      const fechaVencimiento = new Date();
-      fechaVencimiento.setFullYear(fechaActual.getFullYear() + 4); // Expira en 4 años
-
       const nuevaTarjeta = await TarjetaCredito.create({
         cliente_id,
         numero_tarjeta,
-        tipo: tipo || 'clasica',
         limite_credito,
-        saldo_actual: 0.00,
-        fecha_vencimiento,
-        dia_corte,
-        dia_pago,
+        saldo_utilizado: 0.00,
+        fecha_corte: dia_corte,
+        fecha_pago: dia_pago,
         estado: 'activa'
       });
 
@@ -139,7 +136,7 @@ const tarjetaCreditoController = {
       const tarjeta = await TarjetaCredito.findByPk(id);
       if (!tarjeta) return res.status(404).json({ error: 'Tarjeta no encontrada.' });
 
-      if (estado === 'cancelada' && parseFloat(tarjeta.saldo_actual) > 0) {
+      if (estado === 'cancelada' && parseFloat(tarjeta.saldo_utilizado) > 0) {
         return res.status(400).json({ error: 'No se puede cancelar una tarjeta con saldo pendiente.' });
       }
 
@@ -181,8 +178,7 @@ const tarjetaCreditoController = {
         return res.status(400).json({ error: 'No se admiten pagos a tarjetas canceladas.' });
       }
 
-      if (parseFloat(tarjeta.saldo_actual) <= 0) {
-        await t.rollback();
+      if (parseFloat(tarjeta.saldo_utilizado) <= 0) {
         return res.status(400).json({ error: 'La tarjeta no presenta saldo adeudado.' });
       }
 
@@ -219,10 +215,10 @@ const tarjetaCreditoController = {
 
       // 3. Disminuir saldo adeudado de la tarjeta
       const datosAnteriores = tarjeta.toJSON();
-      let nuevoSaldoTarjeta = parseFloat(tarjeta.saldo_actual) - monto;
+      let nuevoSaldoTarjeta = parseFloat(tarjeta.saldo_utilizado) - monto;
       if (nuevoSaldoTarjeta < 0) nuevoSaldoTarjeta = 0; // Evitar saldo negativo
 
-      await tarjeta.update({ saldo_actual: nuevoSaldoTarjeta }, { transaction: t });
+      await tarjeta.update({ saldo_utilizado: nuevoSaldoTarjeta }, { transaction: t });
 
       await t.commit();
 

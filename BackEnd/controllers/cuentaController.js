@@ -33,7 +33,15 @@ const cuentaController = {
       const offset = (page - 1) * limit;
 
       let whereClause = {};
-      if (cliente_id) whereClause.cliente_id = cliente_id;
+      
+      // Si es un usuario normal, solo ve sus propias cuentas
+      if (req.usuario.rol_nombre === 'usuario') {
+        whereClause.cliente_id = req.usuario.cliente_id;
+      } else if (cliente_id) {
+        // Si es admin/cajero y envió cliente_id, filtrar por ese
+        whereClause.cliente_id = cliente_id;
+      }
+
       if (tipo) whereClause.tipo = tipo;
       if (estado) whereClause.estado = estado;
 
@@ -84,12 +92,21 @@ const cuentaController = {
   crear: async (req, res) => {
     try {
       const { cliente_id, tipo, moneda = 'GTQ' } = req.body;
+      let target_cliente_id = cliente_id;
 
-      if (!cliente_id || !tipo) {
-        return res.status(400).json({ error: 'cliente_id y tipo son obligatorios.' });
+      // Si es un cliente (rol usuario), forzar que la cuenta sea para él mismo
+      if (req.usuario.rol_nombre === 'usuario') {
+        if (!req.usuario.cliente_id) {
+          return res.status(403).json({ error: 'Tu usuario no tiene un perfil de cliente vinculado.' });
+        }
+        target_cliente_id = req.usuario.cliente_id;
       }
 
-      const cliente = await Cliente.findByPk(cliente_id);
+      if (!target_cliente_id || !tipo) {
+        return res.status(400).json({ error: 'tipo es obligatorio.' });
+      }
+
+      const cliente = await Cliente.findByPk(target_cliente_id);
       if (!cliente) {
         return res.status(404).json({ error: 'Cliente no encontrado.' });
       }
@@ -98,7 +115,7 @@ const cuentaController = {
 
       const nuevaCuenta = await Cuenta.create({
         numero_cuenta,
-        cliente_id,
+        cliente_id: target_cliente_id,
         tipo,
         moneda,
         saldo: 0.00,
@@ -163,7 +180,7 @@ const cuentaController = {
 
       // Solo el propietario o empleados pueden consultar saldo
       // Asumiendo que `req.usuario.cliente_id` es el cliente autenticado
-      if (req.usuario.rol_nombre === 'cliente' && req.usuario.cliente_id !== cuenta.cliente_id) {
+      if (req.usuario.rol_nombre === 'usuario' && req.usuario.cliente_id !== cuenta.cliente_id) {
          return res.status(403).json({ error: 'No tiene permiso para ver esta cuenta.' });
       }
 

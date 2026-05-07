@@ -1,0 +1,110 @@
+.sidebar-container {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background-color: #FFFFFF;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
+.sidebar-header {
+  padding: 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sidebar-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+/* Perfil en Sidebar */
+.sidebar-profile {
+  padding: 0 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar-sidebar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.profile-info h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.profile-info p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Botón Nueva Transacción */
+.sidebar-action {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.btn-new-tx {
+  width: 100%;
+  padding: 0.875rem;
+  background: var(--primary-dark);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+/* Navegación */
+.sidebar-nav {
+  flex: 1;
+  padding: 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background-color: #F1F5F9;
+  color: var(--text-main);
+}
+
+.sidebar-link.active {
+  background-color: #E6F9F3; /* Verde muy claro */
+  color: var(--secondary-green);
+}
+
+.sidebar-link.active svg {
+  color: var(--secondary-green);
+}

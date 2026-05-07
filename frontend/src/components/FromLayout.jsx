@@ -1,15 +1,15 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import Navbar from './Navbar';
-import '../styles/Layout.css';
+import FromSidebar from './FromSidebar';
+import FromNavbar from './FromNavbar';
+import '../styles/FromLayout.css';
 
-const Layout = () => {
+const FromLayout = () => {
   return (
     <div className="layout-container">
-      <Sidebar />
+      <FromSidebar />
       <div className="layout-main">
-        <Navbar />
+        <FromNavbar />
         <main className="layout-content">
           <Outlet />
         </main>
@@ -18,4 +18,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default FromLayout;

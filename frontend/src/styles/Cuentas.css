@@ -1,0 +1,95 @@
+.accounts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.account-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.account-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.account-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.account-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #F1F5F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-dark);
+}
+
+.account-type-info h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.account-number {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.account-balance-section {
+  margin-top: 1.5rem;
+}
+
+.balance-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.balance-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+.account-card-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #F1F5F9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.view-details-link {
+  color: var(--secondary-green);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.yield-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--secondary-green);
+  background: #E6F9F3;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}

@@ -1,12 +1,14 @@
 {
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "init": "^0.1.2",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.22.3",
+    "node-cron": "^4.2.1",
     "sequelize": "^6.37.8",
     "sequelize-cli": "^6.6.5"
   }

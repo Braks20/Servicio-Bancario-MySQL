@@ -11,7 +11,12 @@ const authController = {
       const { username, password } = req.body;
 
       if (!username || !password) {
-        return res.status(400).json({ error: 'Usuario y contraseña son requeridos.' });
+        return res.status(400).json({ error: 'Cédula/Usuario y contraseña son requeridos.' });
+      }
+
+      // Restricción: Clientes solo con cédula (solo números), Admin es la excepción
+      if (username !== 'admin' && !/^\d+$/.test(username)) {
+        return res.status(400).json({ error: 'Los clientes deben iniciar sesión únicamente con su número de cédula.' });
       }
 
       // Buscar usuario incluyendo su rol y cliente
@@ -23,24 +28,34 @@ const authController = {
         ]
       });
 
+      console.log(`\n--- INTENTO DE LOGIN ---`);
+      console.log(`Username: ${username}`);
+      
       if (!usuario) {
+        console.log(`ERROR: Usuario ${username} no encontrado.`);
         return res.status(401).json({ error: 'Credenciales inválidas.' });
       }
 
+      console.log(`Usuario encontrado: ID=${usuario.id}, Rol=${usuario.rol?.nombre}, Estado=${usuario.estado}`);
+
       // Verificar si el usuario está inactivo
       if (usuario.estado !== 'activo') {
+        console.log(`ERROR: Usuario ${username} está ${usuario.estado}.`);
         return res.status(403).json({ error: 'Usuario inactivo. Contacte a soporte.' });
       }
 
       // Verificar si está bloqueado por intentos fallidos
       if (usuario.bloqueado_hasta && new Date() < usuario.bloqueado_hasta) {
+        console.log(`ERROR: Usuario ${username} está bloqueado hasta ${usuario.bloqueado_hasta}`);
         return res.status(403).json({ error: 'Cuenta bloqueada temporalmente por intentos fallidos. Intente más tarde.' });
       }
 
       // Comparar contraseñas
       const isValidPassword = await bcrypt.compare(password, usuario.password_hash);
+      console.log(`Resultado bcrypt.compare: ${isValidPassword}`);
 
       if (!isValidPassword) {
+        console.log(`ERROR: Contraseña incorrecta para ${username}.`);
         // Incrementar intentos fallidos
         const nuevosIntentos = usuario.intentos_fallidos + 1;
         let updateData = { intentos_fallidos: nuevosIntentos };
@@ -77,11 +92,16 @@ const authController = {
         expiresIn: '2h' // El token expira en 2 horas
       });
 
-      await registrarAuditoria({ usuario, ip: req.ip, headers: req.headers }, 'LOGIN', 'Usuarios', usuario.id);
+      // Set token as an httpOnly cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 2 * 60 * 60 * 1000 // 2 hours
+      });
 
       return res.status(200).json({
         mensaje: 'Login exitoso',
-        token,
         usuario: {
           id: usuario.id,
           username: usuario.username,
@@ -98,8 +118,9 @@ const authController = {
   // POST /api/auth/logout
   logout: async (req, res) => {
     try {
-      // El logout en JWT es manejado mayormente por el cliente (borrando el token).
-      // Aquí solo registramos el evento de cierre de sesión en auditoría.
+      // Clear the cookie
+      res.clearCookie('token');
+      
       if (req.usuario) {
         await registrarAuditoria(req, 'LOGOUT', 'Usuarios', req.usuario.id);
       }
@@ -170,6 +191,41 @@ const authController = {
     } catch (error) {
       console.error('Error al obtener perfil:', error);
       return res.status(500).json({ error: 'Error interno del servidor.' });
+    }
+  },
+
+  // GET /api/auth/check
+  checkAuth: async (req, res) => {
+    try {
+      // El middleware auth.js (si se aplica a esta ruta) o verificamos manualmente
+      const token = req.cookies.token;
+      if (!token) {
+        return res.status(401).json({ error: 'No autenticado' });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key_temporal');
+      const usuario = await Usuario.findByPk(decoded.id, {
+        attributes: { exclude: ['password_hash'] },
+        include: [
+          { model: Role, as: 'rol', attributes: ['id', 'nombre'] },
+          { model: Cliente, as: 'cliente' }
+        ]
+      });
+
+      if (!usuario) {
+        return res.status(401).json({ error: 'Usuario no encontrado' });
+      }
+
+      return res.status(200).json({
+        usuario: {
+          id: usuario.id,
+          username: usuario.username,
+          rol: usuario.rol.nombre,
+          cliente: usuario.cliente ? { id: usuario.cliente.id, nombre: usuario.cliente.nombre, apellido: usuario.cliente.apellido } : null
+        }
+      });
+    } catch (error) {
+      return res.status(401).json({ error: 'Token inválido o expirado' });
     }
   }
 };

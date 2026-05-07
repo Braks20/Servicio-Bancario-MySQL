@@ -47,13 +47,13 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="input-group">
-            <label htmlFor="username">Nombre de Usuario</label>
+            <label htmlFor="username">Número de Cédula</label>
             <div className="input-wrapper">
               <Mail className="input-icon" size={20} />
               <input
                 type="text"
                 id="username"
-                placeholder="Nombre de usuario"
+                placeholder="Cédula (o admin)"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required

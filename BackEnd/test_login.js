@@ -1,14 +1,16 @@
 const axios = require('axios');
-async function test() {
+
+async function testLogin() {
   try {
-    const res = await axios.post('http://localhost:3000/api/auth/login', {
+    console.log('Probando login...');
+    const response = await axios.post('http://localhost:3000/api/auth/login', {
       username: 'admin',
       password: 'admin123'
     });
-    console.log('Login exitoso:', JSON.stringify(res.data, null, 2));
+    console.log('Respuesta:', JSON.stringify(response.data, null, 2));
   } catch (err) {
-    console.error('Login fallido:', err.response ? err.response.status : err.message);
-    if (err.response) console.error('Error data:', err.response.data);
+    console.error('Error:', err.response ? err.response.data : err.message);
   }
 }
-test();
+
+testLogin();

@@ -3,10 +3,6 @@ import api from './api';
 export const authService = {
   login: async (username, password) => {
     const response = await api.post('/auth/login', { username, password });
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.usuario));
-    }
     return response.data;
   },
 
@@ -15,9 +11,6 @@ export const authService = {
       await api.post('/auth/logout');
     } catch (error) {
       console.error('Error durante el logout en el servidor', error);
-    } finally {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
     }
   },
 
@@ -34,15 +27,11 @@ export const authService = {
     return response.data;
   },
 
-  getCurrentUser: () => {
-    const userStr = localStorage.getItem('user');
-    if (!userStr) return null;
+  checkAuth: async () => {
     try {
-      return JSON.parse(userStr);
+      const response = await api.get('/auth/check');
+      return response.data.usuario;
     } catch (error) {
-      console.error("Error al parsear el usuario desde localStorage:", error);
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
       return null;
     }
   }

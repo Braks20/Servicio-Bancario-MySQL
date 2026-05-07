@@ -30,6 +30,7 @@ const Prestamo      = require('./Prestamo')(sequelize);
 const TarjetaCredito= require('./TarjetaCredito')(sequelize);
 const Notificacion  = require('./Notificacion')(sequelize);
 const LogAuditoria  = require('./LogAuditoria')(sequelize);
+const SolicitudCuenta = require('./SolicitudCuenta')(sequelize);
 
 // ─── Colección de modelos ─────────────────────────────────────────────────────
 const models = {
@@ -42,6 +43,7 @@ const models = {
   TarjetaCredito,
   Notificacion,
   LogAuditoria,
+  SolicitudCuenta,
 };
 
 // ─── Registrar asociaciones ───────────────────────────────────────────────────

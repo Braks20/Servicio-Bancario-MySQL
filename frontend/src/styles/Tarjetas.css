@@ -1,0 +1,167 @@
+.cards-management-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.cards-layout {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2.5rem;
+  margin-top: 2rem;
+}
+
+/* Visual de la Tarjeta */
+.credit-card-visual {
+  width: 100%;
+  max-width: 440px;
+  height: 260px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  color: white;
+  position: relative;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-chip {
+  width: 45px;
+  height: 35px;
+  background: #fbbf24;
+  border-radius: 6px;
+  opacity: 0.8;
+}
+
+.card-number {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  margin-top: 2rem;
+}
+
+.card-details-row {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.detail-label {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 0.25rem;
+}
+
+.detail-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Controles de Seguridad */
+.security-controls {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.control-item:last-child {
+  border-bottom: none;
+}
+
+.control-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F1F5F9;
+  color: #64748B;
+}
+
+.control-info {
+  flex: 1;
+}
+
+.control-info h4 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.control-info p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #E2E8F0;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--secondary-green);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Métricas de Tarjeta */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.metric-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}

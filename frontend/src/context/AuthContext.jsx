@@ -8,12 +8,19 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on mount
-    const currentUser = authService.getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
-    }
-    setLoading(false);
+    const initAuth = async () => {
+      try {
+        const currentUser = await authService.checkAuth();
+        if (currentUser) {
+          setUser(currentUser);
+        }
+      } catch (error) {
+        console.error("Error validando sesión:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    initAuth();
   }, []);
 
   const login = async (email, password) => {
